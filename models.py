@@ -9,6 +9,8 @@ class Element(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String(100), nullable=False)
     symbol=db.Column(db.String(2), nullable=False)
+    atomic_number=db.Column(db.Integer, nullable=False)
+    atmoic_weight=db.Column(db.Float, nullable=False)
     group=db.Column(db.Integer, nullable=False)
     period=db.Column(db.Integer, nullable=False)
     metal=db.Column(db.Integer, nullable=False) # 0 is non-metal, 1 is semi-metal, 2 is metal, -1 is unsure (eg. for Og)?
