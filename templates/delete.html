@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Delete Item</h2>
+<!-- Form to delete an existing item, posts to /delete/<id> -->
+<form action="/delete" method="POST">
+    <input type="number" min="0" name="id" placeholder="Item ID" required>
+    <button type="submit">Delete</button>
+</form>
+{% endblock %}

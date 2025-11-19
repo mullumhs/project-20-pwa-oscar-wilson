@@ -10,7 +10,7 @@ from models import db, Element
 def init_routes(app):
 
     @app.route('/', methods=['GET'])
-    def get_items():
+    def index():
         # This route should retrieve all items from the database and display them on the page.
         elements = Element.query.all()
         return render_template('index.html', message='Displaying all items', elements=elements)
@@ -18,7 +18,7 @@ def init_routes(app):
 
 
     @app.route('/add', methods=['GET', 'POST'])
-    def create_item():
+    def add_element():
         # This route should handle adding a new item to the database.
         if request.method == 'POST':
                        
@@ -59,12 +59,12 @@ def init_routes(app):
             db.session.add(new_element)
             db.session.commit()
             return render_template('index.html', message='Item added successfully')
-        return render_template('index.html', message='Add?')
+        return render_template('add.html')
 
 
 
     @app.route('/update', methods=['GET','POST'])
-    def update_item():
+    def update_element():
         # This route should handle updating an existing item identified by the given ID.
         if request.method == 'POST':
             id=int(request.form['id'])
@@ -104,14 +104,17 @@ def init_routes(app):
             element.most_stable_halflife_found = request.form['most_stable_halflife_found']
         
             db.session.commit()
-        return render_template('index.html', message=f'Item updated successfully')
+            return render_template('index.html', message=f'Item updated successfully')
+        return render_template('update.html')
 
 
 
-    @app.route('/delete', methods=['POST'])
-    def delete_item():
-        id=int(request.form['id'])
-        element = Element.query.get_or_404(id)
-        db.session.delete(element)
-        db.session.commit()
-        return render_template('index.html', message=f'Item deleted successfully')
+    @app.route('/delete', methods=['GET', 'POST'])
+    def delete_element():
+        if request.method == "POST":
+            id=int(request.form['id'])
+            element = Element.query.get_or_404(id)
+            db.session.delete(element)
+            db.session.commit()
+            return render_template('index.html', message=f'Item deleted successfully')
+        return render_template('delete.html')
