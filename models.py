@@ -10,10 +10,10 @@ class Element(db.Model):
     name=db.Column(db.String(100), nullable=False)
     symbol=db.Column(db.String(2), nullable=False)
     atomic_number=db.Column(db.Integer, nullable=False)
-    atmoic_weight=db.Column(db.Float, nullable=False)
+    atomic_weight=db.Column(db.Float, nullable=False)
     group=db.Column(db.Integer, nullable=False)
     period=db.Column(db.Integer, nullable=False)
-    metal=db.Column(db.Integer, nullable=False) # 0 is non-metal, 1 is semi-metal, 2 is metal, -1 is unsure (eg. for Og)?
+    metal=db.Column(db.String(100), nullable=False) # Non-Metal, Semi-Metal, Metal, Unsure
     melting_point=db.Column(db.Float) # in Kelvin at 1 atmosphere of pressure
     boiling_point=db.Column(db.Float) # in Kelvin at 1 atmosphere of pressure
     radioactive=db.Column(db.Boolean) # if all isotopes are radioactive

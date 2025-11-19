@@ -21,6 +21,7 @@ def init_routes(app):
     def create_item():
         # This route should handle adding a new item to the database.
         if request.method == 'POST':
+                       
             try:
                 mp = float(request.form['melting_point'])
             except:
@@ -44,6 +45,8 @@ def init_routes(app):
             new_element = Element(
                 name = request.form['name'],
                 symbol = request.form['symbol'],
+                atomic_number = int(request.form['atomic_number']),
+                atomic_weight = float(request.form['atomic_weight']),
                 group = int(request.form['group']),
                 period = int(request.form['period']),
                 metal = request.form['metal'],
@@ -89,6 +92,8 @@ def init_routes(app):
 
             element.name = request.form['name']
             element.symbol = request.form['symbol']
+            element.atomic_number = int(request.form["atomic_number"])
+            element.atomic_weight = float(request.form["atomic_weight"])
             element.group = int(request.form['group'])
             element.period = int(request.form['period'])
             element.metal = request.form['metal']

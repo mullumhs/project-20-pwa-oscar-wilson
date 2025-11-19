@@ -17,7 +17,7 @@
     <!-- This will later display items from the database -->
     <ul>
         {% for element in elements %}
-        <li>{{ element.id }} {{ element.name }} ({{ element.symbol }}) {{ element.group }}, {{ element.period }} - {{ element.metal }} - {{ element.melting_point }}K, {{ element.boiling_point }}K - {{ element.radioactive }}</li>
+        <li>{{ element.id }} {{ element.name }} ({{ element.symbol }}), Z: {{ element.atomic_number }}, A: {{ element.atomic_weight }}, Group: {{ element.group }}, Period: {{ element.period }} - {{ element.metal }} - MP in K at 100kPa: {{ element.melting_point }}, BP in K at 100kPa: {{ element.boiling_point }} - Radioactive?: {{ element.radioactive }}</li>
         {% endfor %}
     </ul>
 
@@ -26,8 +26,10 @@
     <form action="/add" method="POST">
         <input type="text" name="name" placeholder="Element Name" required><br>
         <input type="text" name="symbol" placeholder="Element Symbol" required><br>
-        <input type="number" name="group" placeholder="Element Group (Number)" required><br>
-        <input type="number" name="period" placeholder="Element Period (Number)" required><br>
+        <input type="number" name="group" min="0" placeholder="Element Group (Number)" required><br>
+        <input type="number" name="period" min="0" placeholder="Element Period (Number)" required><br>
+        <input type="number" step=0.001 min="0" name="atomic_number" placeholder="Atomic Number" required><br>
+        <input type="number" step=0.001 min="0" name="atomic_weight" placeholder="Atomic Weight (3dp)" required><br>
 
         <input type="radio" id="metal" name="metal" placeholder="Metal/Semi-Metal/Non-Metal/Unsure" value="Metal" required>
         <label for="metal">Metal</label><br>
@@ -38,8 +40,8 @@
         <input type="radio" id="unsure_metal" name="metal" placeholder="Metal/Semi-Metal/Non-Metal/Unsure" value="Unsure" required>
         <label for="unsure_metal">Unsure</label><br>
 
-        <input type="number" step=0.001 name="melting_point" placeholder="Melting Point at SLC in Kelvin"><br>
-        <input type="number" step=0.001 name="boiling_point" placeholder="Boiling Point at SLC in Kelvin"><br>
+        <input type="number" step=0.001 min="0" name="melting_point" placeholder="Melting Point at SLC in Kelvin"><br>
+        <input type="number" step=0.001 min="0" name="boiling_point" placeholder="Boiling Point at SLC in Kelvin"><br>
 
         <input type="radio" id="no_radioactive" name="radioactive" placeholder="Radioactive" value=0 checked>
         <label for="no_radioactive">A stable isotope of this element exists.</label><br>
@@ -48,7 +50,7 @@
         
         <div>
             <input type="number" name="most_stable_isotope_found" placeholder="Most Stable Isotope Found"><br>
-            <input type="text" name="most_stable_halflife_found" placeholder="Most Stable Isotope Found"><br>
+            <input type="text" name="most_stable_halflife_found" placeholder="Most Stable Half-Life Found"><br>
         </div>
 
         <button type="submit">Create</button>
@@ -61,8 +63,10 @@
         
         <input type="text" name="name" placeholder="Element Name" required><br>
         <input type="text" name="symbol" placeholder="Element Symbol" required><br>
-        <input type="number" name="group" placeholder="Element Group (Number)" required><br>
-        <input type="number" name="period" placeholder="Element Period (Number)" required><br>
+        <input type="number" name="group" min="0" placeholder="Element Group (Number)" required><br>
+        <input type="number" name="period" min="0" placeholder="Element Period (Number)" required><br>
+        <input type="number" step=0.001 min="0" name="atomic_number" placeholder="Atomic Number" required><br>
+        <input type="number" step=0.001 min="0" name="atomic_weight" placeholder="Atomic Weight (3dp)" required><br>
 
         <input type="radio" id="metal" name="metal" placeholder="Metal/Semi-Metal/Non-Metal/Unsure" value="Metal" required>
         <label for="metal">Metal</label><br>
@@ -73,8 +77,8 @@
         <input type="radio" id="unsure_metal" name="metal" placeholder="Metal/Semi-Metal/Non-Metal/Unsure" value="Unsure" required>
         <label for="unsure_metal">Unsure</label><br>
 
-        <input type="number" step=0.001 name="melting_point" placeholder="Melting Point at SLC in Kelvin"><br>
-        <input type="number" step=0.001 name="boiling_point" placeholder="Boiling Point at SLC in Kelvin"><br>
+        <input type="number" step=0.001 min="0" name="melting_point" placeholder="Melting Point at SLC in Kelvin"><br>
+        <input type="number" step=0.001 min="0" name="boiling_point" placeholder="Boiling Point at SLC in Kelvin"><br>
 
         <input type="radio" id="no_radioactive" name="radioactive" placeholder="Radioactive" value=0 checked>
         <label for="no_radioactive">A stable isotope of this element exists.</label><br>
@@ -82,8 +86,8 @@
         <label for="yes_radioactive">All known isotopes of this element are radioactive.</label><br>
         
         <div>
-            <input type="number" name="most_stable_isotope_found" placeholder="Most Stable Isotope Found"><br>
-            <input type="text" name="most_stable_halflife_found" placeholder="Most Stable Isotope Found"><br>
+            <input type="number" min="0" name="most_stable_isotope_found" placeholder="Most Stable Isotope Found"><br>
+            <input type="text" name="most_stable_halflife_found" placeholder="Most Stable Half-Life Found"><br>
         </div>
 
         <button type="submit">Update</button>
@@ -92,7 +96,7 @@
     <h2>Delete Item</h2>
     <!-- Form to delete an existing item, posts to /delete/<id> -->
     <form action="/delete" method="POST">
-        <input type="number" name="id" placeholder="Item ID" required>
+        <input type="number" min="0" name="id" placeholder="Item ID" required>
         <button type="submit">Delete</button>
     </form>
 
