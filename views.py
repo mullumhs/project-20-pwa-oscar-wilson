@@ -10,11 +10,10 @@ from models import db, Element
 def init_routes(app):
 
     @app.route('/', methods=['GET'])
-    def index():
+    def index(edit_mode=False):
         # This route should retrieve all items from the database and display them on the page.
         elements = Element.query.all()
-        return render_template('index.html', message='Displaying all items', elements=elements)
-
+        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=edit_mode)
 
 
     @app.route('/add', methods=['GET', 'POST'])
@@ -59,15 +58,14 @@ def init_routes(app):
             db.session.add(new_element)
             db.session.commit()
             return render_template('index.html', message='Item added successfully')
-        return render_template('add.html')
+        return render_template('write.html', element=None)
 
 
 
-    @app.route('/update', methods=['GET','POST'])
-    def update_element():
+    @app.route('/update/<int:id>', methods=['GET','POST'])
+    def update_element(id):
         # This route should handle updating an existing item identified by the given ID.
         if request.method == 'POST':
-            id=int(request.form['id'])
             element = Element.query.get_or_404(id)
 
             try:
@@ -105,7 +103,7 @@ def init_routes(app):
         
             db.session.commit()
             return render_template('index.html', message=f'Item updated successfully')
-        return render_template('update.html')
+        return render_template('write.html', element=element)
 
 
 

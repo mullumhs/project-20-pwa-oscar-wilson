@@ -21,7 +21,7 @@
             <div class="navbar-nav">
                 <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                 <a class="nav-link" href="{{ url_for('add_element') }}">Add</a>
-                <a class="nav-link" href="{{ url_for('update_element') }}">Update</a>
+                <a class="nav-link" href="{{ url_for('index', edit_mode=True) }}">Edit Mode</a>
                 <a class="nav-link" href="{{ url_for('delete_element') }}">Delete</a>
             </div>
             </div>

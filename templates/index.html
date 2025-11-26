@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Items</h1>
+    <h1>Elements</h1>
 
     <!-- Display any message passed from the backend -->
     {% if message %}
@@ -11,7 +11,14 @@
     <!-- This will later display items from the database -->
     <ul>
         {% for element in elements %}
-        <li>{{ element.id }} {{ element.name }} ({{ element.symbol }}), Z: {{ element.atomic_number }}, A: {{ element.atomic_weight }}, Group: {{ element.group }}, Period: {{ element.period }} - {{ element.metal }} - MP in K at 100kPa: {{ element.melting_point }}, BP in K at 100kPa: {{ element.boiling_point }} - Radioactive?: {{ element.radioactive }}</li>
+        <li>
+            {{ element.id }}: 
+            {% if edit_mode == True %}
+            <a href="{{ url_for('Update', id=element.id)}}">{{ element.name }}</a>
+            {% else %}
+            {{ element.name }}
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
 {% endblock %}
