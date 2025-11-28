@@ -10,10 +10,16 @@ from models import db, Element
 def init_routes(app):
 
     @app.route('/', methods=['GET'])
-    def index(edit_mode=False):
+    def index():
         # This route should retrieve all items from the database and display them on the page.
         elements = Element.query.all()
-        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=edit_mode)
+        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=False)
+    
+    @app.route('/edit', methods=['GET'])
+    def edit_mode():
+        # This route should retrieve all items from the database and display them on the page.
+        elements = Element.query.all()
+        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=True)
 
 
     @app.route('/add', methods=['GET', 'POST'])
@@ -65,9 +71,8 @@ def init_routes(app):
     @app.route('/update/<int:id>', methods=['GET','POST'])
     def update_element(id):
         # This route should handle updating an existing item identified by the given ID.
+        element = Element.query.get_or_404(id)
         if request.method == 'POST':
-            element = Element.query.get_or_404(id)
-
             try:
                 mp = float(request.form['melting_point'])
             except:

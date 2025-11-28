@@ -13,8 +13,8 @@
         {% for element in elements %}
         <li>
             {{ element.id }}: 
-            {% if edit_mode == True %}
-            <a href="{{ url_for('Update', id=element.id)}}">{{ element.name }}</a>
+            {% if edit_mode %}
+            <a href="{{ url_for('update_element', id=element.id)}}">{{ element.name }}</a>
             {% else %}
             {{ element.name }}
             {% endif %}
