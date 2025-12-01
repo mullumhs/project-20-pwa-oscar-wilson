@@ -1,10 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Delete Item</h2>
+<h2 class="pb-2 mb-4 border-bottom border-secondary" >Delete Element</h2>
+
+{% set element_id_dict = {0 : ""} %}
+
+{% for element in elements %}
+    {% set _ = element_id_dict.update({element.id: element.name}) %}
+{% endfor %}
+
 <!-- Form to delete an existing item, posts to /delete/<id> -->
 <form action="/delete" method="POST">
-    <input type="number" min="0" name="id" placeholder="Item ID" required>
-    <button type="submit">Delete</button>
+    <label class="form-label" for="id_select">Element ID</label>
+    <input class="form-control" type="number" min="0" name="id" id="id_select" placeholder="Item ID" required oninput="showSelectedElement()"><br>
+    
+    <script>
+      function showSelectedElement() {
+        const inputValue = document.getElementById('id_select').value;
+        console.log("Input value changed:", inputValue);
+        // Perform desired actions here, e.g., update another element, make an AJAX request.
+        selected_element = document.getElementById("selected_element");
+        message = "<strong>{{ element_id_dict["+String(inputValue)+"] }} Hey!"+String(inputValue)+"</strong>";
+        selected_element.innerHTML = message;
+      }
+    </script>
+
+    <p>Selected Element: <span id="selected_element"></span></p>
+
+    <button class="btn btn-danger" type="submit">Delete</button>
 </form>
 {% endblock %}

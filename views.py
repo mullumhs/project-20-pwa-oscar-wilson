@@ -54,6 +54,8 @@ def init_routes(app):
                 atomic_weight = float(request.form['atomic_weight']),
                 group = int(request.form['group']),
                 period = int(request.form['period']),
+                x_coord = int(request.form['x_coord']),
+                y_coord = int(request.form['y_coord']),
                 metal = request.form['metal'],
                 melting_point = mp,
                 boiling_point = bp,
@@ -99,6 +101,8 @@ def init_routes(app):
             element.atomic_weight = float(request.form["atomic_weight"])
             element.group = int(request.form['group'])
             element.period = int(request.form['period'])
+            element.x_coord = int(request.form['x_coord'])
+            element.y_coord = int(request.form['y_coord'])
             element.metal = request.form['metal']
             element.melting_point = mp
             element.boiling_point = bp
@@ -120,4 +124,5 @@ def init_routes(app):
             db.session.delete(element)
             db.session.commit()
             return render_template('index.html', message=f'Item deleted successfully')
-        return render_template('delete.html')
+        elements = Element.query.all()
+        return render_template('delete.html', elements=elements)
