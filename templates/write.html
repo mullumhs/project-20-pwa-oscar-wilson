@@ -41,26 +41,26 @@
     </div>
 
     <!----------------------------------------- Coordinates  --------------------------------------------------------------->
-    <div class="row g-3 align-items-center">
-    <div class="col-auto">
-        <span class="form-label">
-        Coordinates:
-        </span>
-    </div>
-    <div class="col-auto">
-        <label hidden for="x_coord">X coordinate</label>
-        <input type="number" id="x_coord" class="form-control" name="x_coord" value="{{ element.x_coord }}" placeholder="X coordinate (group)">
-    </div>
-    <div class="col-auto">
-        <label hidden for="x_coord">Y coordinate</label>
-        <input type="number" id="y_coord" class="form-control" name="y_coord" value="{{ element.y_coord }}" placeholder="Y coordinate (period)">
-    </div>
+    <div class="mb-4 row g-3 align-items-center">
+        <div class="col-auto">
+            <span class="form-label">
+            Coordinates:
+            </span>
+        </div>
+        <div class="col-auto">
+            <label hidden for="x_coord">X coordinate</label>
+            <input type="number" id="x_coord" class="form-control" name="x_coord" value="{{ element.x_coord }}" placeholder="X coordinate (group)">
+        </div>
+        <div class="col-auto">
+            <label hidden for="x_coord">Y coordinate</label>
+            <input type="number" id="y_coord" class="form-control" name="y_coord" value="{{ element.y_coord }}" placeholder="Y coordinate (period)">
+        </div>
     </div>
 
     <!----------------------------------------- Metallic Classification --------------------------------------------------------------->
     <div>
         <h3>Metallic Classification</h3>
-        <div class="mb-3 form-check">
+        <div class="mb-4 form-check">
             {% if element.metal == "Metal" %}
             <input class="form-check-input" type="radio" id="metal" name="metal" value="Metal" checked required>
             {% else %}
@@ -92,16 +92,16 @@
     </div>
 
     <!----------------------------------------- Melting and Boiling Point --------------------------------------------------------------->
-    <div class="mb-3">
+    <div class="mb-4">
         <h3>Melting and Boiling Point</h3>
 
         <!-- Melting Point -->
-        <div class="row g-3 align-items-center">
+        <div class="mb-3 row g-3 align-items-center">
             <div class="col-auto">
-                <label for="melting_point" class="col-form-label">Melting Point</label>
+                <label for="melting_point" class="mb-0 form-label">Melting Point</label>
             </div>
             <div class="col-auto">
-                <input type="number" step=0.001 min="0" name="melting_point" id="melting_point" class="form-control" value="{{ element.melting_point }}" aria-describedby="mp-help-inline-text"><br>
+                <input type="number" step=0.001 min="0" name="melting_point" id="melting_point" class="form-control" value="{{ element.melting_point }}" aria-describedby="mp-help-inline-text">
             </div>
             <div class="col-auto">
                 <span id="mp-help-inline-text" class="form-text">
@@ -111,12 +111,12 @@
         </div>
 
         <!-- Boiling Point -->
-        <div class="row g-3 align-items-center">
+        <div class="mb-3 row g-3 align-items-center">
             <div class="col-auto align-items-center">
-                <label for="boiling_point" class="col-form-label">Boiling Point</label>
+                <label for="boiling_point" class="mb-0 form-label">Boiling Point</label>
             </div>
             <div class="col-auto align-items-center">
-                <input type="number" step=0.001 min="0" name="boiling_point" id="boiling_point" class="form-control" value="{{ element.boiling_point }}" aria-describedby="bp-help-inline-text"><br>
+                <input type="number" step=0.001 min="0" name="boiling_point" id="boiling_point" class="form-control" value="{{ element.boiling_point }}" aria-describedby="bp-help-inline-text">
             </div>
             <div class="col-auto align-items-center">
                 <span id="bp-help-inline-text" class="form-text">
@@ -129,7 +129,7 @@
     <!----------------------------------------- Radioactive Properties --------------------------------------------------------------->
     <div>
         <h3>Radioactive Properties</h3>
-        <div class="mb-3 form-check">
+        <div class="mb-4 form-check">
             {% if element.radioactive %}
             <input class="form-check-input" type="radio" id="no_radioactive" name="radioactive" value="Radioactive" value=0 required>
             <label class="form-check-label" for="no_radioactive">A stable isotope of this element exists.</label><br>
@@ -144,7 +144,7 @@
         </div>
 
         <!-- TODO: Make this class hidden unless element is radioactive-->
-        <div class="mb-3">
+        <div class="mb-4">
             <!-- Most Stable Isotope Found -->
             <label class="form-label" for="most_stable_isotope_found">Most Stable Isotope Found</label>
             <input class="form-control" type="number" name="most_stable_isotope_found" value="{{ element.most_stable_isotope_found }}" id="most_stable_isotope_found"><br>

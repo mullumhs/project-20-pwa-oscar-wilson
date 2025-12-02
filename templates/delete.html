@@ -4,9 +4,18 @@
 <h2 class="pb-2 mb-4 border-bottom border-secondary" >Delete Element</h2>
 
 {% set element_id_dict = {0 : ""} %}
+<script>
+  var element_id_dict = {}
+</script>
 
 {% for element in elements %}
-    {% set _ = element_id_dict.update({element.id: element.name}) %}
+    <script>
+      element_id_dict["{{ element.id }}"] = "{{ element.name }}"
+
+      function get_element_by_id(id) {
+        return element_id_dict[String(id)]
+      }
+    </script>
 {% endfor %}
 
 <!-- Form to delete an existing item, posts to /delete/<id> -->
@@ -20,7 +29,7 @@
         console.log("Input value changed:", inputValue);
         // Perform desired actions here, e.g., update another element, make an AJAX request.
         selected_element = document.getElementById("selected_element");
-        message = "<strong>{{ element_id_dict["+String(inputValue)+"] }} Hey!"+String(inputValue)+"</strong>";
+        message = "<strong>"+get_element_by_id(inputValue)+"</strong>";
         selected_element.innerHTML = message;
       }
     </script>
@@ -28,5 +37,6 @@
     <p>Selected Element: <span id="selected_element"></span></p>
 
     <button class="btn btn-danger" type="submit">Delete</button>
+
 </form>
 {% endblock %}
