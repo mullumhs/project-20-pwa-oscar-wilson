@@ -8,9 +8,38 @@
         <p><strong>{{ message }}</strong></p>
     {% endif %}
 
+    {% set found_element = false %}
+
     <!-- This will later display items from the database -->
-    <ul>
-        {% for element in elements %}
+    <table style="min-height: 80%; display: flex; flex-direction: column;">
+        <tr style="flex-grow: 1; display: flex; justify-content: space-between;">
+            {% for number in range(1, 19)%}
+            <th style="height: 100%; aspect-ratio: 1 / 1;" >{{number}}</th>
+            {% endfor %}
+        </tr>
+        {% for y in range(1, 11) %}
+        <tr style="min-height: 9%;">
+            {% for x in range(1, 19) %}
+
+                {% for element in elements %}
+
+                    {% if element.x_coord == x and element.y_coord == y and found_element == false %}
+                        <td style="height: 100%; aspect-ratio: 1;">{{ element.symbol }}</td>
+                        {% set found_element = true %}
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if found_element == false %}
+                <td style="height: 100%; aspect-ratio: 1;"></td>
+                {% endif %}
+
+                {% set found_element = false%}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% for element in elements %}
         <li>
             {{ element.id }}: 
             {% if edit_mode %}
@@ -20,5 +49,4 @@
             {% endif %}
         </li>
         {% endfor %}
-    </ul>
 {% endblock %}
