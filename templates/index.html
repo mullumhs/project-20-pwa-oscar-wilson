@@ -25,7 +25,11 @@
                     {% if element.x_coord == x and element.y_coord == y %}
                         {% set search.found = true %}
                         <td class="periodic_table element_container">
-                            <button class="periodic_table element_container m-0 b-0 p-0" onclick="location.href='https://google.com';">
+                            {% if edit_mode %}
+                                <button class="periodic_table element_container m-0 b-0 p-0" style="background-color: aquamarine;" onclick="location.href='/update/{{ element.id }}';">
+                            {% else %}
+                                <button class="periodic_table element_container m-0 b-0 p-0" onclick="location.href='/element/{{ element.id }}';">
+                            {% endif %}
                             <p class="periodic_table element_atomic_number">{{ element.atomic_number }}</p>
                             <p class="periodic_table element_symbol">{{ element.symbol }}</p>
                             <p class="periodic_table element_name">{{ element.name }}</p>
@@ -45,14 +49,4 @@
         </tr>
         {% endfor %}
     </table>
-    {% for element in elements %}
-        <li>
-            {{ element.id }}: 
-            {% if edit_mode %}
-            <a href="{{ url_for('update_element', id=element.id)}}">{{ element.name }}</a>
-            {% else %}
-            {{ element.name }}
-            {% endif %}
-        </li>
-        {% endfor %}
 {% endblock %}

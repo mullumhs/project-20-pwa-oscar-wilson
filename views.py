@@ -17,9 +17,15 @@ def init_routes(app):
     
     @app.route('/edit', methods=['GET'])
     def edit_mode():
-        # This route should retrieve all items from the database and display them on the page.
+        # This route retrieves all items from the database and displays them on the page, but clicking on the individual items takes you to its update page.
         elements = Element.query.all()
-        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=True)
+        return render_template('index.html', message='Displaying all items (Edit Mode)', elements=elements, edit_mode=True)
+    
+    @app.route('/element/<int:id>', methods=['GET'])
+    def element_view(id):
+        # This route retrieves an items from the database and displays it on the page.
+        element = Element.query.get_or_404(id)
+        return render_template('element.html', element=element)
 
 
     @app.route('/add', methods=['GET', 'POST'])
