@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<table class="periodic_table">
-        <tr class="periodic_table">
-            <td class="periodic_table element_container" style="max-width: 50%; border-radius: 5%; border: 1px solid white; background-color: pink;">
-                <p class="periodic_table element_atomic_number" style="padding-top: 2%; font-size: 4em;">{{ element.atomic_number }}</p>
-                <p class="periodic_table element_symbol" style="flex-grow: 5; max-height: 65%; font-size: 20em;">{{ element.symbol }}</p>
-                <p class="periodic_table element_name" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.name }}</p>
-                <p class="periodic_table element_atomic_weight" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.atomic_weight }}</p>
-                </button>
-            </td>
-        </tr>
-    </table>
+<div class="element_container">
+    <p class="periodic_table element_atomic_number" style="padding-top: 2%; font-size: 4em;">{{ element.atomic_number }}</p>
+    <p class="periodic_table element_symbol" style="flex-grow: 5; max-height: 65%; font-size: 20em; line-height: 120%;">{{ element.symbol }}</p>
+    <p class="periodic_table element_name" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.name }}</p>
+    <p class="periodic_table element_atomic_weight" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.atomic_weight }}</p>
+</div>
 {% endblock %}

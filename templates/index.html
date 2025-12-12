@@ -26,9 +26,9 @@
                         {% set search.found = true %}
                         <td class="periodic_table element_container">
                             {% if edit_mode %}
-                                <button class="periodic_table element_container m-0 b-0 p-0" style="background-color: aquamarine;" onclick="location.href='/update/{{ element.id }}';">
+                                <button type="button" class="periodic_table element_container m-0 b-0 p-0" style="background-color: aquamarine;" onclick="location.href='/update/{{ element.id }}';">
                             {% else %}
-                                <button class="periodic_table element_container m-0 b-0 p-0" onclick="location.href='/element/{{ element.id }}';">
+                                <button type="button" class="periodic_table element_container m-0 b-0 p-0" onclick="location.href='/element/{{ element.id }}';">
                             {% endif %}
                             <p class="periodic_table element_atomic_number">{{ element.atomic_number }}</p>
                             <p class="periodic_table element_symbol">{{ element.symbol }}</p>

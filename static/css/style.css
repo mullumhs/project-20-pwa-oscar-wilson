@@ -28,18 +28,27 @@ th.periodic_table {
     display: flex;
 }
 
-td.periodic_table, button.periodic_table {
+td.periodic_table {
     width: 60px; 
+}
+
+td.periodic_table, button.periodic_table, div.element_container {
     flex-grow: 1; 
     aspect-ratio: 1/1; 
     display: flex;
     flex-direction: column;
 }
 
-button.periodic_table.element_container {
+button.periodic_table.element_container, div.element_container {
     border-radius: 5%;
     border: 1px solid white;
     background-color: pink;
+    aspect-ratio: 1/1; 
+}
+
+div.element_container {
+    width: 50%;
+    font-size: clamp(1px, 1.4vw, 16px)
 }
 
 p.periodic_table {
