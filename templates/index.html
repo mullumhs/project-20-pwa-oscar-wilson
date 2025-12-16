@@ -3,16 +3,11 @@
 {% block content %}
     <h1>Elements</h1>
 
-    <!-- Display any message passed from the backend -->
-    {% if message %}
-        <p><strong>{{ message }}</strong></p>
-    {% endif %}
-
     {% set search = namespace(found=false) %} <!-- namespace object holds on to values outside loops, useful to use as 'break' since Jinja no hyave that -->
 
     <!--------------------------- Display items from the database ----------------------->
     <table class="periodic_table">
-        <tr class="periodic_table">
+        <tr class="periodic_table" style="height: auto;">
             {% for number in range(1, 19)%}
             <th class="periodic_table"><p style="text-align: center; flex-grow: 1; margin-bottom: 0;">{{number}}</p></th>
             {% endfor %}

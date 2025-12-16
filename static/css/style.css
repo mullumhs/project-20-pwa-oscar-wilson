@@ -10,37 +10,33 @@ body {
 }
 
 table.periodic_table {
-    min-height: 80%; 
     display: flex; 
     flex-direction: column;
     overflow-x: scroll;
+    height: 85%
 }
 
 tr.periodic_table {
-    height: 100%; 
+    height: clamp(32px, 8vh, 60px); 
+    width: clamp(576px, 108vh, 1080px); 
     flex-grow: 1; 
     display: flex; 
     justify-content: space-between
 }
 
 th.periodic_table {
-    min-width: 32px; 
     flex-grow: 1;  
     display: flex;
-    font-size: clamp(6px, 1vw, 16px)
-}
-
-td.periodic_table {
-    width: 60px; 
+    font-size: clamp(6px, 1vh, 16px)
 }
 
 td.periodic_table, button.periodic_table, div.element_container {
-    flex-grow: 1; 
+    flex-grow: 1; /* (min_width*18 +24 )/100 = min font size */
+    width: clamp(32px, 6vh, 60px); 
     aspect-ratio: 1/1; 
     display: flex;
     flex-direction: column;
-    min-width: 32px; /* (min_width*18 +24 )/100 = min font size */
-    font-size: clamp(6px, 1vw, 16px)
+    font-size: clamp(6px, 1vh, 16px)
 }
 
 button.periodic_table.element_container, div.element_container {
@@ -64,7 +60,7 @@ p.periodic_table {
 p.element_atomic_number {
     text-align: left;
     padding-left: 5%;
-    height: 5%;
+    height: 7%;
 }
 
 p.element_symbol {
@@ -76,8 +72,28 @@ p.element_atomic_weight {
 }
 
 @media screen and (max-width: 960px) {
+    p.periodic_table {
+        text-align: center; 
+        margin-bottom: 0px;
+        font-size: 1em
+    }
+
+    p.element_atomic_number {
+        text-align: left;
+        padding-left: 5%;
+        height: 10%;
+    }
+
+    p.element_symbol {
+        font-size: 1.65em;
+    }
+    
     p.element_atomic_weight {
         height: 0%;
         display: none;
     }
+}
+
+button.periodic_table.element_container {
+    aspect-ratio: 1/1; 
 }
