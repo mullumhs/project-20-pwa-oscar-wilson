@@ -142,3 +142,46 @@ def init_routes(app):
             return index(message=f'Element deleted successfully')
         elements = Element.query.all()
         return render_template('delete.html', elements=elements)
+    
+
+    @app.route('/search', methods=['POST'])
+    def search():
+        try:
+            float(request.form["search"].strip())
+            is_number = True
+        except:
+            is_number = False
+
+        results={}
+
+        if is_number:
+            search_query=float(request.form["search"].strip())
+            results["Atomic Number"] = Element.query.filter(Element.atomic_number.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Atomic Weight"] = Element.query.filter(Element.atomic_weight.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Group"] = Element.query.filter(Element.group.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Period"] = Element.query.filter(Element.period.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Boiling Point"] = Element.query.filter(Element.boiling_point.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Melting Point"] = Element.query.filter(Element.melting_point.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+            results["Most Stable Isotope"] = Element.query.filter(Element.most_stable_isotope_found.between(search_query*0.67, search_query*1.5)).order_by(Element.atomic_number.asc()).all()
+        else:
+            search_query="%"+request.form["search"].strip()+"%"
+            results["Element Name"] = Element.query.filter(Element.name.ilike(search_query)).order_by(Element.atomic_number.asc()).all()
+            results["Element Symbol"] = Element.query.filter(Element.symbol.ilike(search_query)).order_by(Element.atomic_number.asc()).all()
+            results["Metallic Classification"] = Element.query.filter(Element.metal.ilike(search_query)).order_by(Element.atomic_number.asc()).all()
+            if search_query == "%"+"radioactive"+"%":
+                results["Radioactivity"] = Element.query.filter(Element.radioactive == True).order_by(Element.atomic_number.asc()).all()
+
+        sorting_key_A = lambda key: len(results[key])
+        results_order = [key for key in results]
+
+        results_order.sort(key=sorting_key_A) # used so that the 'most relevant' section comes first (more results = more likely to be what the user wanted, right???))
+        
+        try:
+            results_order.remove("Element Symbol")
+            results_order.insert(0, "Element Symbol") # if there are results for this, that probably means they are the most relevant, so they are forced to the front
+        except:
+            pass
+
+        results_order.append("Help")
+
+        return render_template('search.html', results=results, results_order=results_order)

@@ -49,7 +49,7 @@
                 {{element.name}}-{{element.most_stable_isotope_found}} is the most stable isotope of {{ element.name }} that has been found.
             
             {% elif element.most_stable_isotope_found == None and element.most_stable_halflife_found != None %}
-                The most stable isotope of {{element.name}} has a halflife of {{ element.most_stable_halflife_found}}.
+                The most stable isotope of {{element.name}} has a half-life of {{ element.most_stable_halflife_found}}.
             
             {% endif %}
         {% endif %}

@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Elements</h1>
+    <h2 class="pb-2 mb-4 border-bottom border-secondary" >Elements</h2>
     
     <!--------------------------- Display message ----------------------->
     <script>
         function ShowToast() {
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(document.getElementById('liveToast'));
-            toastBootstrap.show();
+            if ("{{ message }}" != "") {
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(document.getElementById('liveToast'));
+                toastBootstrap.show();
+            }
         }
     </script>
 
