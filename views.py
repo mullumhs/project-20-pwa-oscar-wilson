@@ -10,16 +10,16 @@ from models import db, Element
 def init_routes(app):
 
     @app.route('/', methods=['GET'])
-    def index():
+    def index(message='Displaying the periodic table'):
         # This route should retrieve all items from the database and display them on the page.
         elements = Element.query.all()
-        return render_template('index.html', message='Displaying all items', elements=elements, edit_mode=False)
+        return render_template('index.html', message=message, elements=elements, edit_mode=False)
     
     @app.route('/edit', methods=['GET'])
     def edit_mode():
         # This route retrieves all items from the database and displays them on the page, but clicking on the individual items takes you to its update page.
         elements = Element.query.all()
-        return render_template('index.html', message='Displaying all items (Edit Mode)', elements=elements, edit_mode=True)
+        return render_template('index.html', message='Edit mode: click on an element to update it.', elements=elements, edit_mode=True)
     
     @app.route('/element/<int:id>', methods=['GET'])
     def element_view(id):
@@ -43,19 +43,24 @@ def init_routes(app):
             except:
                 bp = None
 
-            if request.form['radioactive'] == '0':
-                radioactive = False
-            else:
+            if request.form['radioactive'] == 'radioactive':
                 radioactive = True
+            else:
+                radioactive = False
 
             try:
                 most_stable_isotope = int(request.form['most_stable_isotope_found'])
             except:
                 most_stable_isotope = None
 
+            if request.form['most_stable_halflife_found'] == None or len(request.form['most_stable_halflife_found'].strip()) == 0:
+                most_stable_halflife = None
+            else:
+                most_stable_halflife = request.form['most_stable_halflife_found'].strip()
+
             new_element = Element(
-                name = request.form['name'],
-                symbol = request.form['symbol'],
+                name = request.form['name'].strip().capitalize(),
+                symbol = request.form['symbol'].strip().capitalize(),
                 atomic_number = int(request.form['atomic_number']),
                 atomic_weight = float(request.form['atomic_weight']),
                 group = int(request.form['group']),
@@ -67,11 +72,11 @@ def init_routes(app):
                 boiling_point = bp,
                 radioactive = radioactive,
                 most_stable_isotope_found = most_stable_isotope,
-                most_stable_halflife_found = request.form['most_stable_halflife_found']
+                most_stable_halflife_found = most_stable_halflife
             )
             db.session.add(new_element)
             db.session.commit()
-            return render_template('index.html', message='Item added successfully')
+            return index(message='Element added successfully')
         return render_template('write.html', element=None)
 
 
@@ -91,18 +96,23 @@ def init_routes(app):
             except:
                 bp = None
 
-            if request.form['radioactive'] == '0':
-                radioactive = False
-            else:
+            if request.form['radioactive'] == "radioactive":
                 radioactive = True
+            else:
+                radioactive = False
 
             try:
                 most_stable_isotope = int(request.form['most_stable_isotope_found'])
             except:
                 most_stable_isotope = None
 
-            element.name = request.form['name']
-            element.symbol = request.form['symbol']
+            if request.form['most_stable_halflife_found'] == None or len(request.form['most_stable_halflife_found'].strip()) == 0:
+                most_stable_halflife = None
+            else:
+                most_stable_halflife = request.form['most_stable_halflife_found'].strip()
+
+            element.name = request.form['name'].strip().capitalize()
+            element.symbol = request.form['symbol'].strip().capitalize()
             element.atomic_number = int(request.form["atomic_number"])
             element.atomic_weight = float(request.form["atomic_weight"])
             element.group = int(request.form['group'])
@@ -114,10 +124,10 @@ def init_routes(app):
             element.boiling_point = bp
             element.radioactive = radioactive
             element.most_stable_isotope_found = most_stable_isotope
-            element.most_stable_halflife_found = request.form['most_stable_halflife_found']
+            element.most_stable_halflife_found = most_stable_halflife
         
             db.session.commit()
-            return render_template('index.html', message=f'Item updated successfully')
+            return index(message='Element updated successfully')
         return render_template('write.html', element=element)
 
 
@@ -129,6 +139,6 @@ def init_routes(app):
             element = Element.query.get_or_404(id)
             db.session.delete(element)
             db.session.commit()
-            return render_template('index.html', message=f'Item deleted successfully')
+            return index(message=f'Element deleted successfully')
         elements = Element.query.all()
         return render_template('delete.html', elements=elements)

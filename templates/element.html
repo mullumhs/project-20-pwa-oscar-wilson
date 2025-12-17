@@ -2,9 +2,57 @@
 
 {% block content %}
 <div class="element_container">
-    <p class="periodic_table element_atomic_number" style="padding-top: 2%; font-size: 4em;">{{ element.atomic_number }}</p>
-    <p class="periodic_table element_symbol" style="flex-grow: 5; max-height: 65%; font-size: 20em; line-height: 120%;">{{ element.symbol }}</p>
-    <p class="periodic_table element_name" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.name }}</p>
-    <p class="periodic_table element_atomic_weight" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.atomic_weight }}</p>
+    <p class="not_periodic_table element_atomic_number" style="padding-top: 2%; font-size: 4em;">{{ element.atomic_number }}</p>
+    <p class="not_periodic_table element_symbol" style="flex-grow: 5; max-height: 65%; font-size: 20em; line-height: 120%;">{{ element.symbol }}</p>
+    <p class="not_periodic_table element_name" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.name }}</p>
+    <p class="not_periodic_table element_atomic_weight_nohide" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.atomic_weight }}</p>
 </div>
+
+<h2 class="pb-2 my-4" >{{ element.name }}</h2>
+    <p class="text">
+        <!-- General info and metallic classification -->
+        {% if element.metal != 'unsure' %}
+            {{element.name}} ({{element.symbol}}) is a {{element.metal}} with an atomic number of {{element.atomic_number}} and an atomic weight of {{element.atomic_weight}}g/mol. 
+        {% else %}
+            {{element.name}} ({{element.symbol}}) has an atomic number of {{element.atomic_number}} and an atomic weight of {{element.atomic_weight}}g/mol. Its metallic classification is unknown.
+        {% endif %}
+
+        <br><br>
+        <!-- Location on periodic table -->
+        {% if element.group != 0 %}
+            It is in group {{element.group}} and period {{element.period}}. 
+        {% else %}
+            It is in the f-block group and period {{element.period}}. 
+        {% endif %}
+
+        <br><br>
+        <!-- MP and BP -->
+        {% if element.melting_point != None and element.boiling_point != None %}
+            At a pressure of 100kPa, {{ element.name }} has a melting point of {{element.melting_point}}K and a boiling point of {{element.boiling_point}}K.
+            <br><br>
+        {% elif element.melting_point == None and element.boiling_point != None %}
+            At a pressure of 100kPa, {{element.name}} has a boiling point of {{element.boiling_point}}K.
+            <br><br>
+        {% elif element.melting_point != None and element.boiling_point == None %}
+            At a pressure of 100kPa, {{element.name}} has a melting point of {{element.melting_point}}K.
+            <br><br>
+        {% endif %}
+
+        <!-- Radioactive properties -->
+        {% if element.radioactive == True %}
+            There are no known isotopes of {{element.name}} that are stable. 
+
+            {% if element.most_stable_isotope_found != None and element.most_stable_halflife_found != None %}
+                {{element.name}}-{{element.most_stable_isotope_found}} is the most stable isotope of {{ element.name }} that has been found. It has a halflife of {{ element.most_stable_halflife_found}}.
+            
+            {% elif element.most_stable_isotope_found != None and element.most_stable_halflife_found == None %}
+                {{element.name}}-{{element.most_stable_isotope_found}} is the most stable isotope of {{ element.name }} that has been found.
+            
+            {% elif element.most_stable_isotope_found == None and element.most_stable_halflife_found != None %}
+                The most stable isotope of {{element.name}} has a halflife of {{ element.most_stable_halflife_found}}.
+            
+            {% endif %}
+        {% endif %}
+    </p>
+
 {% endblock %}

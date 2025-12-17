@@ -61,31 +61,31 @@
     <div>
         <h3>Metallic Classification</h3>
         <div class="mb-4 form-check">
-            {% if element.metal == "Metal" %}
-            <input class="form-check-input" type="radio" id="metal" name="metal" value="Metal" checked required>
+            {% if element.metal == "metal" %}
+            <input class="form-check-input" type="radio" id="metal" name="metal" value="metal" checked required>
             {% else %}
-            <input class="form-check-input" type="radio" id="metal" name="metal" value="Metal" required>
+            <input class="form-check-input" type="radio" id="metal" name="metal" value="metal" required>
             {% endif %}
             <label class="form-check-label" for="metal">Metal</label><br>
 
-            {% if element.metal == "Semi-Metal" %}
-            <input class="form-check-input" type="radio" id="semimetal" name="metal" value="Semi-Metal" checked required>
+            {% if element.metal == "semi-metal" %}
+            <input class="form-check-input" type="radio" id="semimetal" name="metal" value="semi-metal" checked required>
             {% else %}
-            <input class="form-check-input" type="radio" id="semimetal" name="metal" value="Semi-Metal" required>
+            <input class="form-check-input" type="radio" id="semimetal" name="metal" value="semi-metal" required>
             {% endif %}
             <label class="form-check-label" for="semimetal">Semi-Metal</label><br>
 
-            {% if element.metal == "Non-Metal" %}
-            <input class="form-check-input" type="radio" id="nonmetal" name="metal" value="Non-Metal" checked required>
+            {% if element.metal == "non-metal" %}
+            <input class="form-check-input" type="radio" id="nonmetal" name="metal" value="non-metal" checked required>
             {% else %}
-            <input class="form-check-input" type="radio" id="nonmetal" name="metal" value="Non-Metal" required>
+            <input class="form-check-input" type="radio" id="nonmetal" name="metal" value="non-metal" required>
             {% endif %}
             <label class="form-check-label" for="nonmetal">Non-Metal</label><br>
 
-            {% if element.metal == "Unsure" %}
-            <input class="form-check-input" type="radio" id="unsure_metal" name="metal" value="Unsure" checked required>
+            {% if element.metal == "unsure" %}
+            <input class="form-check-input" type="radio" id="unsure_metal" name="metal" value="unsure" checked required>
             {% else %}
-            <input class="form-check-input" type="radio" id="unsure_metal" name="metal" value="Unsure" required>
+            <input class="form-check-input" type="radio" id="unsure_metal" name="metal" value="unsure" required>
             {% endif %}
             <label class="form-check-label" for="unsure_metal">Unsure</label><br>
         </div>
@@ -130,15 +130,15 @@
     <div>
         <h3>Radioactive Properties</h3>
         <div class="mb-4 form-check">
-            {% if element.radioactive %}
-            <input class="form-check-input" type="radio" id="no_radioactive" name="radioactive" value="Radioactive" value=0 required>
+            {% if element.radioactive == True %}
+            <input class="form-check-input" type="radio" id="no_radioactive" name="radioactive" value="not radioactive" required>
             <label class="form-check-label" for="no_radioactive">A stable isotope of this element exists.</label><br>
-            <input class="form-check-input" type="radio" id="yes_radioactive" name="radioactive" value="Radioactive" value=1 checked required>
+            <input class="form-check-input" type="radio" id="yes_radioactive" name="radioactive" value="radioactive" checked required>
             <label class="form-check-label" for="yes_radioactive">All known isotopes of this element are radioactive.</label><br>
             {% else %}
-            <input class="form-check-input" type="radio" id="no_radioactive" name="radioactive" value="Radioactive" value=0 checked required>
+            <input class="form-check-input" type="radio" id="no_radioactive" name="radioactive" value="not radioactive" checked required>
             <label class="form-check-label" for="no_radioactive">A stable isotope of this element exists.</label><br>
-            <input class="form-check-input" type="radio" id="yes_radioactive" name="radioactive" value="Radioactive" value=1 required>
+            <input class="form-check-input" type="radio" id="yes_radioactive" name="radioactive" value="radioactive" required>
             <label class="form-check-label" for="yes_radioactive">All known isotopes of this element are radioactive.</label><br>
             {% endif %}
         </div>

@@ -51,11 +51,12 @@ button.periodic_table.element_container, div.element_container {
 }
 
 div.element_container {
-    width: 50%;
-    font-size: clamp(1px, 1.4vw, 16px)
+    width: min(clamp(60px, 60vh, 475px), clamp(60px, 90vw, 475px));
+    height: min(clamp(60px, 60vh, 475px), clamp(60px, 90vw, 475px)); 
+    font-size: min(clamp(1px, 1.4vh, 11px), clamp(1px, 2.1vw, 11px));
 }
 
-p.periodic_table {
+p.periodic_table, p.not_periodic_table {
     text-align: center; 
     margin-bottom: 0px;
     font-size: 0.85em
@@ -83,17 +84,17 @@ p.element_atomic_weight {
         font-size: 1em
     }
 
-    p.element_atomic_number {
+    p.periodic_table.element_atomic_number {
         text-align: left;
         padding-left: 5%;
         height: 10%;
     }
 
-    p.element_symbol {
+    p.periodic_table.element_symbol {
         font-size: 1.65em;
     }
     
-    p.element_atomic_weight {
+    p.periodic_table.element_atomic_weight {
         height: 0%;
         display: none;
     }

@@ -15,7 +15,7 @@ class Element(db.Model):
     period=db.Column(db.Integer, nullable=False)
     x_coord=db.Column(db.Integer, nullable=False)
     y_coord=db.Column(db.Integer, nullable=False)
-    metal=db.Column(db.String(100), nullable=False) # Non-Metal, Semi-Metal, Metal, Unsure
+    metal=db.Column(db.String(100), nullable=False) # non-metal, semi-metal, metal, unsure
     melting_point=db.Column(db.Float) # in Kelvin at 1 atmosphere of pressure
     boiling_point=db.Column(db.Float) # in Kelvin at 1 atmosphere of pressure
     radioactive=db.Column(db.Boolean) # if all isotopes are radioactive

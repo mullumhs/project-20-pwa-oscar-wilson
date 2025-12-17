@@ -10,7 +10,7 @@
      <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"> -->
 </head>
-<body>
+<body onload="ShowToast()">
     <!-- Add your navbar here -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -35,6 +35,12 @@
         {% endblock %}
     </div>
 
+    <!-- Footer -->
+    <footer class="mt-5 py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">© 2025 Oscar Wilson</span>
+        </div>
+    </footer>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
