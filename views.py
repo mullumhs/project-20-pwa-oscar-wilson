@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from models import db, Element
+from sqlalchemy import or_, and_
 
 # Define your routes inside the 'init_routes' function
 # Feel free to rename the routes and functions as you see fit
@@ -10,16 +11,53 @@ from models import db, Element
 def init_routes(app):
 
     @app.route('/', methods=['GET'])
-    def index(message='Displaying the periodic table'):
+    def index(message='Displaying the periodic table', color_view="default"):
         # This route should retrieve all items from the database and display them on the page.
-        elements = Element.query.all()
-        return render_template('index.html', message=message, elements=elements, edit_mode=False)
+        leftover_elements = Element.query.all() # this will only be used for the elements that arent coloured
+
+        elements = {}
+        
+        if color_view == "states":
+            elements["--color_gas"] = Element.query.filter(Element.boiling_point<298).all()
+            elements["--color_liquid"] = Element.query.filter(and_(Element.boiling_point>298 ), (Element.melting_point<298)).all()
+            elements["--color_solid"] = Element.query.filter(Element.melting_point>298).all()
+        elif color_view == "radioactivity":
+            elements["--color_radioactive"] = Element.query.filter(Element.radioactive == True).all()
+            elements["--color_non_radioactive"] = Element.query.filter(Element.radioactive == False).all()
+        elif color_view == "metallic_classification":
+            elements["--color_non_metal"] = Element.query.filter(Element.metal == "non-metal").all()
+            elements["--color_semi_metal"] = Element.query.filter(Element.metal == "semi-metal").all()
+            elements["--color_metal"] = Element.query.filter(Element.metal == "metal").all()
+        elif color_view == "groups":
+            elements["--color_alkali_metal"] = Element.query.filter(Element.group == 1).all()
+            elements["--color_alkaline_earth_metals"] = Element.query.filter(Element.group == 2).all()
+            elements["--color_transition_metals"] = Element.query.filter(or_(Element.group.between(4, 12), and_((Element.period < 6), (Element.group == 3)))).all()
+            elements["--color_lanthanides"] = Element.query.filter(or_(Element.atomic_number == 57, and_((Element.group == 0), (Element.period == 6)))).all()
+            elements["--color_actinides"] = Element.query.filter(or_(Element.atomic_number == 89, and_((Element.group == 0), (Element.period == 7)))).all()
+            elements["--color_triels"] = Element.query.filter(Element.group == 13).all()
+            elements["--color_tetrels"] = Element.query.filter(Element.group == 14).all()
+            elements["--color_pnictogens"] = Element.query.filter(Element.group == 15).all()
+            elements["--color_chalcogens"] = Element.query.filter(Element.group == 16).all()
+            elements["--color_halogen"] = Element.query.filter(Element.group == 17).all()
+            elements["--color_noble_gas"] = Element.query.filter(Element.group == 18).all()
+        else: # This is the default colour view, for element properties
+            elements["--color_alkali_metal"] = Element.query.filter(and_(Element.group == 1), (Element.metal == "metal")).all()
+            elements["--color_alkaline_earth_metals"] = Element.query.filter(and_(Element.group == 2), (Element.metal == "metal")).all()
+            elements["--color_transition_metals"] = Element.query.filter(or_(Element.group.between(4, 12), and_((Element.period < 6), (Element.group == 3)))).all()
+            elements["--color_lanthanides"] = Element.query.filter(or_(Element.atomic_number == 57, and_((Element.group == 0), (Element.period == 6)))).all()
+            elements["--color_actinides"] = Element.query.filter(or_(Element.atomic_number == 89, and_((Element.group == 0), (Element.period == 7)))).all()
+            elements["--color_non_metal"] = Element.query.filter(and_(Element.metal == "non-metal", Element.group != 18)).all()
+            elements["--color_semi_metal"] = Element.query.filter(Element.metal == "semi-metal").all()
+            elements["--color_post_transition_metal"] = Element.query.filter(and_(Element.metal == "metal", Element.group > 12)).all()
+            elements["--color_noble_gas"] = Element.query.filter(and_(Element.group == 18, Element.metal == "non-metal")).all()
+
+        return render_template('index.html', message=message, elements=elements, leftover_elements=leftover_elements, edit_mode=False)
     
     @app.route('/edit', methods=['GET'])
     def edit_mode():
         # This route retrieves all items from the database and displays them on the page, but clicking on the individual items takes you to its update page.
-        elements = Element.query.all()
-        return render_template('index.html', message='Edit mode: click on an element to update it.', elements=elements, edit_mode=True)
+        elements = {"--color_edit_mode":Element.query.all()}
+        return render_template('index.html', message='Edit mode: click on an element to update it.', elements=elements, leftover_elements=Element.query.all(), edit_mode=True)
     
     @app.route('/element/<int:id>', methods=['GET'])
     def element_view(id):
@@ -171,7 +209,7 @@ def init_routes(app):
             if search_query == "%"+"radioactive"+"%":
                 results["Radioactivity"] = Element.query.filter(Element.radioactive == True).order_by(Element.atomic_number.asc()).all()
 
-        sorting_key_A = lambda key: len(results[key])
+        sorting_key_A = lambda key: -len(results[key])
         results_order = [key for key in results]
 
         results_order.sort(key=sorting_key_A) # used so that the 'most relevant' section comes first (more results = more likely to be what the user wanted, right???))

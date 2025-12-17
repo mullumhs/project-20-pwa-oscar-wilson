@@ -1,3 +1,28 @@
+:root {
+    --color_unsure: gray;
+    --color_gas: #ffdd99;
+    --color_liquid: lightblue;
+    --color_solid: #ffaa99;
+    --color_radioactive: #99ffaa;
+    --color_non_radioactive: #22aaaa;
+    --color_non_metal: #00aaff;
+    --color_semi_metal: #ffdd55;
+    --color_metal: #aa88ff;
+    --color_alkali_metal: #ff6677;
+    --color_alkaline_earth_metals: #ddff77;
+    --color_transition_metals: #aa88ff;
+    --color_post_transition_metals: #66ddcc;
+    --color_triels: #55aaff;
+    --color_tetrels: #ff6655;
+    --color_pnictogens: #ffaa55;
+    --color_chalcogens: #99bbff;
+    --color_halogen: #99ff99;
+    --color_noble_gas: #ff88bb;
+    --color_actinides: #5577ff;
+    --color_lanthanides: #ff7744;
+    --color_edit_mode: aquamarine;
+}
+
 html {
     height: 100%;
 }

@@ -11,7 +11,7 @@
         <h3>Searching for {{section}}</h3>
         <ul>
             {% for element in results[section] %}
-                <li><a href="/element/{{ element.id }}">{{element.name}}</a></li>
+                <li><a href="/element/{{ element.id }}">{{element.name}} ({{element.symbol}})</a></li>
             {% endfor %}
         </ul>
     {% endif %}
