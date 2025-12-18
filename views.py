@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from models import db, Element
 from sqlalchemy import or_, and_
+import re
 
 # Define your routes inside the 'init_routes' function
 # Feel free to rename the routes and functions as you see fit
@@ -98,6 +99,8 @@ def init_routes(app):
 
     @app.route('/add', methods=['GET', 'POST'])
     def add_element():
+        message='Element added successfully'
+
         # This route should handle adding a new item to the database.
         if request.method == 'POST':
                        
@@ -126,15 +129,40 @@ def init_routes(app):
             else:
                 most_stable_halflife = request.form['most_stable_halflife_found'].strip()
 
+            # Make sure symbols are valid length and only alphabetic characters
+            symbol = request.form['symbol'].strip()
+            if not symbol.isalpha() or len(symbol) > 2:
+                # Remove non alphabetic characters
+                symbol = re.sub(r'[^a-zA-Z]', '', symbol) 
+                
+                # Try to cut symbol to two characters long
+                try:
+                    symbol = symbol[0:2] 
+                except: # If there was only one or no alphabetic characters, it will come here
+                    # If there were no alphabetic characters, set symbol to default placeholder 'X'
+                    if symbol == "":
+                        symbol == "X" 
+
+                    # Change the message at the end
+                    message = f"Error with symbol: replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\'"
+            symbol = symbol.capitalize()
+
+            # Make sure the coordinates are unique. The form already makes them fit on the table and be integers.
+            x_coord = int(request.form['x_coord'])
+            y_coord = int(request.form['y_coord'])
+            if (x_coord, y_coord) in db.session.query(Element.x_coord, Element.y_coord).all():
+                # Do not continue if non-unique coordinates
+                return redirect(url_for('index', message="Error: element has same coordinates as another. Element creation cancelled."))
+
             new_element = Element(
                 name = request.form['name'].strip().capitalize(),
-                symbol = request.form['symbol'].strip().capitalize(),
+                symbol = symbol,
                 atomic_number = int(request.form['atomic_number']),
                 atomic_weight = float(request.form['atomic_weight']),
                 group = int(request.form['group']),
                 period = int(request.form['period']),
-                x_coord = int(request.form['x_coord']),
-                y_coord = int(request.form['y_coord']),
+                x_coord = x_coord,
+                y_coord = y_coord,
                 metal = request.form['metal'],
                 melting_point = mp,
                 boiling_point = bp,
@@ -144,7 +172,7 @@ def init_routes(app):
             )
             db.session.add(new_element)
             db.session.commit()
-            return redirect(url_for('index',message='Element added successfully'))
+            return redirect(url_for('index', message=message))
         return render_template('write.html', element=None)
 
 
@@ -152,6 +180,8 @@ def init_routes(app):
     @app.route('/update/<int:id>', methods=['GET','POST'])
     def update_element(id):
         # This route should handle updating an existing item identified by the given ID.
+        message='Element updated successfully'
+
         element = Element.query.get_or_404(id)
         if request.method == 'POST':
             try:
@@ -179,8 +209,43 @@ def init_routes(app):
             else:
                 most_stable_halflife = request.form['most_stable_halflife_found'].strip()
 
+            # Make sure symbols are valid length and only alphabetic characters
+            symbol = request.form['symbol'].strip()
+            if not symbol.isalpha() or len(symbol) > 2:
+                # Remove non alphabetic characters
+                symbol = re.sub(r'[^a-zA-Z]', '', symbol) 
+
+                # Try to cut symbol to two characters long
+                try:
+                    symbol = symbol[0:2] 
+                except: # If there was only one or no alphabetic characters, it will come here
+                    # If there were no alphabetic characters, set symbol to default placeholder 'X'
+                    if symbol == "":
+                        symbol == "X" 
+
+                message = message + "\nError with symbol: replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\'"
+            symbol = symbol.capitalize()
+
+
+            # Coordinates validation (unique, integers, fit on the table).
+            x_coord = int(request.form['x_coord'])
+            y_coord = int(request.form['y_coord'])
+            
+            # Check x is integer
+            if float(request.form['x_coord']) - x_coord != 0:
+                message = message + f"\nError with coordinates: x coordinate entered has been rounded down to {x_coord}"
+
+            # Check y is integer
+            if float(request.form['y_coord']) - y_coord != 0:
+                message = message + f"\nError with coordinates: y coordinate entered has been rounded down to {y_coord}"
+
+            # Check unique
+            if (x_coord, y_coord) in db.session.query(Element.x_coord, Element.y_coord).all():
+                # Do not continue if non-unique coordinates
+                return redirect(url_for('index', message="Error: element has same coordinates as another. Element update cancelled."))
+
             element.name = request.form['name'].strip().capitalize()
-            element.symbol = request.form['symbol'].strip().capitalize()
+            element.symbol = symbol
             element.atomic_number = int(request.form["atomic_number"])
             element.atomic_weight = float(request.form["atomic_weight"])
             element.group = int(request.form['group'])
@@ -195,7 +260,7 @@ def init_routes(app):
             element.most_stable_halflife_found = most_stable_halflife
         
             db.session.commit()
-            return redirect(url_for('index', message='Element updated successfully'))
+            return redirect(url_for('index', message=message))
         return render_template('write.html', element=element)
 
 
@@ -256,6 +321,8 @@ def init_routes(app):
     
     @app.route('/resetelements', methods=['GET'])
     def reset_elements():
+        message='Periodic table successfully reset.'
+
         # This dictionary isn't the best practice, but it was the most convenient to make
         periodic_dict = {
             'name':['Hydrogen', 'Helium', 'Lithium', 'Beryllium', 'Boron', 'Carbon', 'Nitrogen', 'Oxygen', 'Fluorine', 'Neon', 'Sodium', 'Magnesium', 'Aluminium', 'Silicon', 'Phosphorus', 'Sulfur', 'Chlorine', 'Argon', 'Potassium', 'Calcium', 'Scandium', 'Titanium', 'Vanadium', 'Chromium', 'Manganese', 'Iron', 'Cobalt', 'Nickel', 'Copper', 'Zinc', 'Gallium', 'Germanium', 'Arsenic', 'Selenium', 'Bromine', 'Krypton', 'Rubidium', 'Strontium', 'Yttrium', 'Zirconium', 'Niobium', 'Molybdenum', 'Technetium', 'Ruthenium', 'Rhodium', 'Palladium', 'Silver', 'Cadmium', 'Indium', 'Tin', 'Antimony', 'Tellurium', 'Iodine', 'Xenon', 'Caesium', 'Barium', 'Lanthanum', 'Cerium', 'Praseodymium', 'Neodymium', 'Promethium', 'Samarium', 'Europium', 'Gadolinium', 'Terbium', 'Dysprosium', 'Holmium', 'Erbium', 'Thulium', 'Ytterbium', 'Lutetium', 'Hafnium', 'Tantalum', 'Tungsten', 'Rhenium', 'Osmium', 'Iridium', 'Platinum', 'Gold', 'Mercury', 'Thallium', 'Lead', 'Bismuth', 'Polonium', 'Astatine', 'Radon', 'Francium', 'Radium', 'Actinium', 'Thorium', 'Protactinium', 'Uranium', 'Neptunium', 'Plutonium', 'Americium', 'Curium', 'Berkelium', 'Californium', 'Einsteinium', 'Fermium', 'Mendelevium', 'Nobelium', 'Lawrencium', 'Rutherfordium', 'Dubnium', 'Seaborgium', 'Bohrium', 'Hassium', 'Meitnerium', 'Darmstadtium', 'Roentgenium', 'Copernicium', 'Nihonium', 'Flerovium', 'Moscovium', 'Livermorium', 'Tennessine', 'Oganesson'],
@@ -310,9 +377,27 @@ def init_routes(app):
             else:
                 most_stable_halflife = periodic_dict['most_stable_halflife_found'][n].strip()
 
+            # Make sure symbols are valid length and only alphabetic characters
+            symbol = periodic_dict['symbol'][n].strip()
+            if not symbol.isalpha() or len(symbol) > 2:
+                # Remove non alphabetic characters
+                symbol = re.sub(r'[^a-zA-Z]', '', symbol) 
+                
+                # Try to cut symbol to two characters long
+                try:
+                    symbol = symbol[0:2] 
+                except: # If there was only one or no alphabetic characters, it will come here
+                    # If there were no alphabetic characters, set symbol to default placeholder 'X'
+                    if symbol == "":
+                        symbol == "X" 
+                
+                message = f"Error with symbol: replaced \'{periodic_dict['symbol'][n].strip()}\' with \'{symbol.capitalize()}\'"
+            
+            symbol = symbol.capitalize()
+
             new_element = Element(
                 name = periodic_dict['name'][n].strip().capitalize(),
-                symbol = periodic_dict['symbol'][n].strip().capitalize(),
+                symbol = symbol,
                 atomic_number = int(periodic_dict['atomic_number'][n]),
                 atomic_weight = float(periodic_dict['atomic_weight'][n]),
                 group = int(periodic_dict['group'][n]),
@@ -330,4 +415,4 @@ def init_routes(app):
             db.session.commit()
         
         # Finish
-        return redirect(url_for('index', message='Periodic table successfully reset.'))
+        return redirect(url_for('index', message=message))
