@@ -4,22 +4,22 @@
 
 {% set search = namespace(found=false) %} <!-- need to make sure at least one result is found -->
 
-<h2 class="pb-2 mb-4 border-bottom border-secondary" >Search</h2>
+<h2 class="pb-2 mb-4 border-bottom border-secondary" >Search Results</h2>
 {% for section in results_order %}
     {% if results[section]|length != 0 %}
         {% set search.found = true %}
-        <h3>Searching for {{section}}</h3>
-        <ul>
+        <h3>Results for {{section}}</h3>
+        <div class="list-group mb-5">
             {% for element in results[section] %}
-                <li><a href="/element/{{ element.id }}">{{element.name}} ({{element.symbol}})</a></li>
+                <a href="/element/{{ element.id }}" class="list-group-item list-group-item-action">{{element.name}} ({{element.symbol}})</a>
             {% endfor %}
-        </ul>
+        </div>
     {% endif %}
 {% endfor %}
 
 {% if search.found == false %}
 <h3>Sorry, there were no results! Maybe you spelt something incorrectly?</h3>
-<a href="{{ url_for('index') }}">Click to go back</a>
+<a href="{{ url_for('index') }}" class="btn btn-primary">Click to go back</a>
 {% endif %}
 
 {% endblock %}

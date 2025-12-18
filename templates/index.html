@@ -40,9 +40,9 @@
                             {% set search.found = true %}
                             <td class="periodic_table element_container">
                                 {% if edit_mode %}
-                                    <button type="button" class="periodic_table element_container m-0 b-0 p-0" style="background-color: var({{ section }});" onclick="location.href='/update/{{ element.id }}';">
+                                    <button type="button" class="periodic_table element_container m-0 b-0 p-0" style="background-color: var({{ section }})" onclick="location.href='/update/{{ element.id }}';">
                                 {% else %}
-                                    <button type="button" class="periodic_table element_container m-0 b-0 p-0" style="background-color: var({{ section }});" onclick="location.href='/element/{{ element.id }}';">
+                                    <button type="button" class="periodic_table element_container m-0 b-0 p-0" style="background-color: var({{ section }})" onclick="location.href='/element/{{ element.id }}';">
                                 {% endif %}
                                 <p class="periodic_table element_atomic_number">{{ element.atomic_number }}</p>
                                 <p class="periodic_table element_symbol">{{ element.symbol }}</p>
@@ -84,4 +84,92 @@
         </tr>
         {% endfor %}
     </table>
+
+    <!------------------------------- Colour Changing ---------------------------------->    
+    <div style="display: flex;">
+        <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Change Colour Code</button>
+        <!------------------------------- Colour Key ---------------------------------->
+        <ul style="display: flex; flex-wrap: wrap; margin-left: 5%; margin-right: 5%; margin-top: auto; margin-bottom: auto; flex-grow: 1; gap: 0px clamp(30px, 5%, 5%)">
+        {% if color_view == 'states' %}
+            <li style="color: var(--color_solid);"><span style="color: black">Solid</span></li>
+            <li style="color: var(--color_liquid);"><span style="color: black">Liquid</span></li>
+            <li style="color: var(--color_gas);"><span style="color: black">Gas</span></li>
+        {% elif color_view == 'radioactivity' %}
+            <li style="color: var(--color_radioactive);"><span style="color: black">Radioactive</span></li>
+            <li style="color: var(--color_non_radioactive);"><span style="color: black">Stable</span></li>
+        {% elif color_view == 'metallic_classification' %}
+            <li style="color: var(--color_metal);"><span style="color: black">Metal</span></li>
+            <li style="color: var(--color_semi_metal);"><span style="color: black">Semi-Metal</span></li>
+            <li style="color: var(--color_non_metal);"><span style="color: black">Non-Metal</span></li>
+            <li style="color: var(--color_unsure);"><span style="color: black">Unsure</span></li>
+        {% elif color_view == 'groups' %}
+            <li style="color: var(--color_alkali_metal);"><span style="color: black">Alkali Metals</span></li>
+            <li style="color: var(--color_alkaline_earth_metals);"><span style="color: black">Alkaline Earth Metals</span></li>
+            <li style="color: var(--color_transition_metals);"><span style="color: black">Transition Metals</span></li>
+            <li style="color: var(--color_triels);"><span style="color: black">Triels</span></li>
+            <li style="color: var(--color_tetrels);"><span style="color: black">Tetrels</span></li>
+            <li style="color: var(--color_pnictogens);"><span style="color: black">Pnictogens</span></li>
+            <li style="color: var(--color_chalcogens);"><span style="color: black">Chalcogens</span></li>
+            <li style="color: var(--color_halogen);"><span style="color: black">Halogens</span></li>
+            <li style="color: var(--color_noble_gas);"><span style="color: black">Noble Gasses</span></li>
+            <li style="color: var(--color_lanthanides);"><span style="color: black">Lanthanides</span></li>
+            <li style="color: var(--color_actinides);"><span style="color: black">Actinides</span></li>
+        {% else %}
+            <li style="color: var(--color_alkali_metal);"><span style="color: black">Alkali Metals</span></li>
+            <li style="color: var(--color_alkaline_earth_metals);"><span style="color: black">Alkaline Earth Metals</span></li>
+            <li style="color: var(--color_transition_metals);"><span style="color: black">Transition Metals</span></li>
+            <li style="color: var(--color_non_metal);"><span style="color: black">Non-Metals</span></li>
+            <li style="color: var(--color_semi_metal);"><span style="color: black">Semi-Metals</span></li>
+            <li style="color: var(--color_post_transition_metals);"><span style="color: black">Post Transition Metals</span></li>
+            <li style="color: var(--color_noble_gas);"><span style="color: black">Noble Gasses</span></li>
+            <li style="color: var(--color_lanthanides);"><span style="color: black">Lanthanides</span></li>
+            <li style="color: var(--color_actinides);"><span style="color: black">Actinides</span></li>
+            <li style="color: var(--color_unsure);"><span style="color: black">Properties Uncertain</span></li>
+        {% endif %}
+        </ul>
+    </div>
+
+    <!------------------------------- Offcanvas ---------------------------------->
+    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Colour Options</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="list-group">
+                {% if color_view == 'states' %}
+                    <a href="{{url_for('index')}}" class="list-group-item list-group-item-action">Default</a>
+                    <a href="{{url_for('index', color_view='states')}}" class="list-group-item list-group-item-action list-group-item-secondary" aria-current="true">States</a>
+                    <a href="{{url_for('index', color_view='radioactivity')}}" class="list-group-item list-group-item-action">Radioactivity</a>
+                    <a href="{{url_for('index', color_view='metallic_classification')}}" class="list-group-item list-group-item-action">Metallic Classification</a>
+                    <a href="{{url_for('index', color_view='groups')}}" class="list-group-item list-group-item-action">Groups</a>
+                {% elif color_view == 'radioactivity' %}
+                    <a href="{{url_for('index')}}" class="list-group-item list-group-item-action">Default</a>
+                    <a href="{{url_for('index', color_view='states')}}" class="list-group-item list-group-item-action">States</a>
+                    <a href="{{url_for('index', color_view='radioactivity')}}" class="list-group-item list-group-item-action list-group-item-secondary" aria-current="true">Radioactivity</a>
+                    <a href="{{url_for('index', color_view='metallic_classification')}}" class="list-group-item list-group-item-action">Metallic Classification</a>
+                    <a href="{{url_for('index', color_view='groups')}}" class="list-group-item list-group-item-action">Groups</a>
+                {% elif color_view == 'metallic_classification' %}
+                    <a href="{{url_for('index')}}" class="list-group-item list-group-item-action">Default</a>
+                    <a href="{{url_for('index', color_view='states')}}" class="list-group-item list-group-item-action">States</a>
+                    <a href="{{url_for('index', color_view='radioactivity')}}" class="list-group-item list-group-item-action">Radioactivity</a>
+                    <a href="{{url_for('index', color_view='metallic_classification')}}" class="list-group-item list-group-item-action list-group-item-secondary" aria-current="true">Metallic Classification</a>
+                    <a href="{{url_for('index', color_view='groups')}}" class="list-group-item list-group-item-action">Groups</a>
+                {% elif color_view == 'groups' %}
+                    <a href="{{url_for('index')}}" class="list-group-item list-group-item-action">Default</a>
+                    <a href="{{url_for('index', color_view='states')}}" class="list-group-item list-group-item-action">States</a>
+                    <a href="{{url_for('index', color_view='radioactivity')}}" class="list-group-item list-group-item-action">Radioactivity</a>
+                    <a href="{{url_for('index', color_view='metallic_classification')}}" class="list-group-item list-group-item-action">Metallic Classification</a>
+                    <a href="{{url_for('index', color_view='groups')}}" class="list-group-item list-group-item-action list-group-item-secondary" aria-current="true">Groups</a>
+                {% else %}
+                    <a href="{{url_for('index')}}" class="list-group-item list-group-item-action list-group-item-secondary" aria-current="true">Default</a>
+                    <a href="{{url_for('index', color_view='states')}}" class="list-group-item list-group-item-action">States</a>
+                    <a href="{{url_for('index', color_view='radioactivity')}}" class="list-group-item list-group-item-action">Radioactivity</a>
+                    <a href="{{url_for('index', color_view='metallic_classification')}}" class="list-group-item list-group-item-action">Metallic Classification</a>
+                    <a href="{{url_for('index', color_view='groups')}}" class="list-group-item list-group-item-action">Groups</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

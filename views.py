@@ -13,6 +13,13 @@ def init_routes(app):
     @app.route('/', methods=['GET'])
     def index(message='Displaying the periodic table', color_view="default"):
         # This route should retrieve all items from the database and display them on the page.
+
+        if request.args.get('message') != None:
+            message=request.args.get('message')
+        
+        if request.args.get('color_view') != None:
+            color_view=request.args.get('color_view')
+
         leftover_elements = Element.query.all() # this will only be used for the elements that arent coloured
 
         elements = {}
@@ -20,7 +27,7 @@ def init_routes(app):
         if color_view == "states":
             elements["--color_gas"] = Element.query.filter(Element.boiling_point<298).all()
             elements["--color_liquid"] = Element.query.filter(and_(Element.boiling_point>298 ), (Element.melting_point<298)).all()
-            elements["--color_solid"] = Element.query.filter(Element.melting_point>298).all()
+            elements["--color_solid"] = Element.query.filter(or_(Element.melting_point>298, or_(Element.atomic_number==6, Element.atomic_number==33), Element.atomic_number.between(105, 111), Element.atomic_number==114)).all()
         elif color_view == "radioactivity":
             elements["--color_radioactive"] = Element.query.filter(Element.radioactive == True).all()
             elements["--color_non_radioactive"] = Element.query.filter(Element.radioactive == False).all()
@@ -51,7 +58,7 @@ def init_routes(app):
             elements["--color_post_transition_metals"] = Element.query.filter(and_(Element.metal == "metal", Element.group > 12)).all()
             elements["--color_noble_gas"] = Element.query.filter(and_(Element.group == 18, Element.metal == "non-metal")).all()
 
-        return render_template('index.html', message=message, elements=elements, leftover_elements=leftover_elements, edit_mode=False)
+        return render_template('index.html', message=message, elements=elements, leftover_elements=leftover_elements, edit_mode=False, color_view=color_view)
     
     @app.route('/edit', methods=['GET'])
     def edit_mode():
@@ -63,7 +70,30 @@ def init_routes(app):
     def element_view(id):
         # This route retrieves an items from the database and displays it on the page.
         element = Element.query.get_or_404(id)
-        return render_template('element.html', element=element)
+
+        # Retrieve a colour -- note db.session.query(Element.id)... returns a list of tuples that look like (id,) which is why I'm looking for (id,) instead of id
+        if (id,) in db.session.query(Element.id).filter(and_(Element.group == 1), (Element.metal == "metal")).all():
+            color = "--color_alkali_metal"
+        elif (id,) in db.session.query(Element.id).filter(and_(Element.group == 2), (Element.metal == "metal")).all():
+            color = "--color_alkaline_earth_metals"
+        elif (id,) in db.session.query(Element.id).filter( and_(Element.metal == 'metal', or_(Element.group.between(4, 12), and_((Element.period < 6), (Element.group == 3)))) ).all():
+            color = "--color_transition_metals"
+        elif (id,) in db.session.query(Element.id).filter( or_(or_(Element.atomic_number == 57, Element.atomic_number == 71), and_((Element.group == 0), (Element.period == 6))) ).all():
+            color = "--color_lanthanides"
+        elif (id,) in db.session.query(Element.id).filter( or_(or_(Element.atomic_number == 89, Element.atomic_number == 103), and_((Element.group == 0), (Element.period == 7))) ).all():
+            color = "--color_actinides"
+        elif (id,) in db.session.query(Element.id).filter(and_(Element.metal == "non-metal", Element.group != 18)).all():
+            color = "--color_non_metal"
+        elif (id,) in db.session.query(Element.id).filter(Element.metal == "semi-metal").all():
+            color = "--color_semi_metal"
+        elif (id,) in db.session.query(Element.id).filter(and_(Element.metal == "metal", Element.group > 12)).all():
+            color = "--color_post_transition_metals"
+        elif (id,) in db.session.query(Element.id).filter(and_(Element.group == 18, Element.metal == "non-metal")).all():
+            color = "--color_noble_gas"
+        else:
+            color = "--color_unsure"
+
+        return render_template('element.html', element=element, color=color)
 
 
     @app.route('/add', methods=['GET', 'POST'])
@@ -114,7 +144,7 @@ def init_routes(app):
             )
             db.session.add(new_element)
             db.session.commit()
-            return index(message='Element added successfully')
+            return redirect(url_for('index',message='Element added successfully'))
         return render_template('write.html', element=None)
 
 
@@ -165,7 +195,7 @@ def init_routes(app):
             element.most_stable_halflife_found = most_stable_halflife
         
             db.session.commit()
-            return index(message='Element updated successfully')
+            return redirect(url_for('index', message='Element updated successfully'))
         return render_template('write.html', element=element)
 
 
@@ -177,7 +207,7 @@ def init_routes(app):
             element = Element.query.get_or_404(id)
             db.session.delete(element)
             db.session.commit()
-            return index(message=f'Element deleted successfully')
+            return redirect(url_for('index', message='Element deleted successfully'))
         elements = Element.query.all()
         return render_template('delete.html', elements=elements)
     
@@ -237,7 +267,7 @@ def init_routes(app):
             'x_coord':['1', '18', '1', '2', '13', '14', '15', '16', '17', '18', '1', '2', '13', '14', '15', '16', '17', '18', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18'],
             'y_coord':['1', '1', '2', '2', '2', '2', '2', '2', '2', '2', '3', '3', '3', '3', '3', '3', '3', '3', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '6', '6', '6', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '6', '7', '7', '7', '10', '10', '10', '10', '10', '10', '10', '10', '10', '10', '10', '10', '10', '10', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7'],
             'metal':['non-metal', 'non-metal', 'metal', 'metal', 'semi-metal', 'non-metal', 'non-metal', 'non-metal', 'non-metal', 'non-metal', 'metal', 'metal', 'metal', 'semi-metal', 'non-metal', 'non-metal', 'non-metal', 'non-metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'semi-metal', 'semi-metal', 'non-metal', 'non-metal', 'non-metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'semi-metal', 'semi-metal', 'non-metal', 'non-metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'non-metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'metal', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure', 'unsure'],
-            'melting_point':['14.01', 'none', '453.69', '1560', '2349', 'none', '63.15', '54.36', '53.53', '24.56', '370.87', '923', '933.47', '1687', '317.3', '388.36', '171.6', '83.8', '336.53', '1115', '1814', '1941', '2183', '2180', '1519', '1811', '1768', '1728', '1357.77', '692.88', '302.9146', '1211.4', 'none', '453', '265.8', '115.79', '312.46', '1050', '1799', '2128', '2750', '2896', '2430', '2607', '2237', '1828.05', '1234.93', '594.22', '429.75', '505.08', '903.78', '722.66', '386.85', '161.4', '301.59', '1000', '1193', '1068', '1208', '1297', '1315', '1345', '1099', '1585', '1629', '1680', '1734', '1802', '1818', '1097', '1925', '2506', '3290', '3695', '3459', '3306', '2719', '2041.4', '1337.33', '234.43', '577', '600.61', '544.7', '527', '575', '202', '281', '973', '1323', '2115', '1841', '1405.3', '917', '912.5', '1449', '1613', '1259', '1173', '1133', '1125', '1100', '1100', '1900', '2400', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '283', '700', '284', '700', '700', '700', '325'],
+            'melting_point':['14.01', 'none', '453.69', '1560', '2349', 'none', '63.15', '54.36', '53.53', '24.56', '370.87', '923', '933.47', '1687', '317.3', '388.36', '171.6', '83.8', '336.53', '1115', '1814', '1941', '2183', '2180', '1519', '1811', '1768', '1728', '1357.77', '692.88', '302.9146', '1211.4', 'none', '453', '265.8', '115.79', '312.46', '1050', '1799', '2128', '2750', '2896', '2430', '2607', '2237', '1828.05', '1234.93', '594.22', '429.75', '505.08', '903.78', '722.66', '386.85', '161.4', '301.59', '1000', '1193', '1068', '1208', '1297', '1315', '1345', '1099', '1585', '1629', '1680', '1734', '1802', '1818', '1097', '1925', '2506', '3290', '3695', '3459', '3306', '2719', '2041.4', '1337.33', '234.43', '577', '600.61', '544.7', '527', '575', '202', '300', '973', '1323', '2115', '1841', '1405.3', '917', '912.5', '1449', '1613', '1259', '1173', '1133', '1125', '1100', '1100', '1900', '2400', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '283', '700', '284', '700', '700', '700', '325'],
             'boiling_point':['20.28', '4.22', '1560', '2742', '4200', '3825', '77.36', '90.2', '85.03', '27.07', '1156', '1363', '2792', '3538', '550', '717.87', '239.11', '87.3', '1032', '1757', '3109', '3560', '3680', '2944', '2334', '3134', '3200', '3186', '2835', '1180', '2673', '3106', '887', '958', '332', '119.93', '961', '1655', '3609', '4682', '5017', '4912', '4538', '4423', '3968', '3236', '2435', '1040', '2345', '2875', '1860', '1261', '457.4', '165.03', '944', '2170', '3737', '3716', '3793', '3347', '3273', '2067', '1802', '3546', '3503', '2840', '2993', '3141', '2223', '1469', '3675', '4876', '5731', '6203', '5869', '5285', '4701', '4098', '3129', '629.88', '1746', '2022', '1837', '1235', '610', '211.3', '890', '2010', '3471', '5061', '4300', '4404', '4273', '3501', '2880', '3383', '2900', '1743', '1269', 'none', 'none', 'none', 'none', '5800', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '340', '1400', 'none', '1400', '1100', '883', '450'],
             'radioactive':['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
             'most_stable_isotope_found':['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '97', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '145', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', 'none', '209', '209', '210', '222', '223', '226', '227', '232', '231', '238', '237', '244', '243', '247', '247', '251', '252', '257', '258', '259', '266', '267', '268', '269', '270', '271', '278', '282', '282', '285', '286', '289', '290', '293', '294', '294'],
@@ -300,4 +330,4 @@ def init_routes(app):
             db.session.commit()
         
         # Finish
-        return index(message='Periodic table successfully reset')
+        return redirect(url_for('index', message='Periodic table successfully reset.'))

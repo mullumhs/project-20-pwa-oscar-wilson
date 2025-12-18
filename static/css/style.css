@@ -5,12 +5,12 @@
     --color_solid: #ffaa99;
     --color_radioactive: #99ffaa;
     --color_non_radioactive: #22aaaa;
-    --color_non_metal: #00aaff;
+    --color_non_metal: #22bbff;
     --color_semi_metal: #ffdd55;
-    --color_metal: #aa88ff;
+    --color_metal: #b788ee;
     --color_alkali_metal: #ff6677;
     --color_alkaline_earth_metals: #ddff77;
-    --color_transition_metals: #aa88ff;
+    --color_transition_metals: var(--color_metal);
     --color_post_transition_metals: #66ddcc;
     --color_triels: #55aaff;
     --color_tetrels: #ff6655;
@@ -44,7 +44,7 @@ table.periodic_table {
 }
 
 tr.periodic_table {
-    height: clamp(32px, 8vh, 60px); 
+    height: clamp(32px, 6vh, 60px); 
     width: clamp(576px, 108vh, 1080px); 
     flex-grow: 1; 
     display: flex; 

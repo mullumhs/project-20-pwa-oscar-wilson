@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="element_container">
+<div class="element_container" style="background-color: var({{color}});">
     <p class="not_periodic_table element_atomic_number" style="padding-top: 2%; font-size: 4em;">{{ element.atomic_number }}</p>
     <p class="not_periodic_table element_symbol" style="flex-grow: 5; max-height: 65%; font-size: 20em; line-height: 120%;">{{ element.symbol }}</p>
     <p class="not_periodic_table element_name" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.name }}</p>
