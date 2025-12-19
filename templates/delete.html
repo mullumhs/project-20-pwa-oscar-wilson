@@ -13,7 +13,11 @@
       element_id_dict["{{ element.id }}"] = "{{ element.name }}"
 
       function get_element_by_id(id) {
-        return element_id_dict[String(id)]
+        x = element_id_dict[String(id)]
+        if (x == null) {
+          x = "<span class='text-danger'>No Element Found</span>"
+        }
+        return x
       }
     </script>
 {% endfor %}
@@ -36,7 +40,29 @@
 
     <p>Selected Element: <span id="selected_element"></span></p>
 
-    <button class="btn btn-danger" type="submit">Delete</button>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      Delete
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Are you sure?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Deletion is permanent!
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">I have changed my mind</button>
+            <button class="btn btn-danger" type="submit">Delete it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 </form>
 {% endblock %}

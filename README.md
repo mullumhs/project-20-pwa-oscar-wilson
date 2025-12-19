@@ -54,7 +54,7 @@ This repository contains the Progressive Web Application (PWA) project for the M
 project/
 ├── static/
 │   ├── css/
-│   ├── js/
+│   ├── images/
 │   └── manifest.json
 ├── templates/
 │   ├── base.html

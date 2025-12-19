@@ -8,7 +8,7 @@
     <p class="not_periodic_table element_atomic_weight_nohide" style="flex-grow: 1; max-height: 13%; font-size: 4em;">{{ element.atomic_weight }}</p>
 </div>
 
-<h2 class="pb-2 my-4" >{{ element.name }}</h2>
+<h2 class="pb-2 my-4" >{{ element.name }} <span class="text-secondary" style="font-size: small;">(id: {{ element.id }})</span></h2>
     <p class="text">
         <!-- General info and metallic classification -->
         {% if element.metal != 'unsure' %}

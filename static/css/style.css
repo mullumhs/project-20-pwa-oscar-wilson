@@ -36,11 +36,19 @@ body {
 
 table.periodic_table {
     display: flex; 
-    flex-direction: column;
     overflow-x: scroll;
     min-height: 85%;
     overflow-y: visible;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    justify-content: center;
+}
+
+/* If the periodic table is too wide to fit on screen (plus 24px of padding), it has to be justified to the left or else it will not overflow correctly*/
+@media screen and (max-width: clamp(600px, calc(108vh + 24px), 1104px)) {
+    table.periodic_table {
+        justify-content: start;
+    }
 }
 
 tr.periodic_table {

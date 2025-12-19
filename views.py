@@ -23,8 +23,12 @@ def init_routes(app):
 
         leftover_elements = Element.query.all() # this will only be used for the elements that arent coloured
 
-        elements = {}
+        # Just check if there are no elements first so you can tell the user to reset the periodic table
+        if len(leftover_elements) == 0:
+            return render_template('index.html', message="Click on 'Reset Periodic Table' in the Nav Bar to get started.", elements={}, leftover_elements=[], edit_mode=False, color_view=color_view)
         
+        # Group each element into a colour category based on the selected colour code
+        elements = {}
         if color_view == "states":
             elements["--color_gas"] = Element.query.filter(Element.boiling_point<298).all()
             elements["--color_liquid"] = Element.query.filter(and_(Element.boiling_point>298 ), (Element.melting_point<298)).all()
@@ -144,16 +148,18 @@ def init_routes(app):
                         symbol == "X" 
 
                     # Change the message at the end
-                    message = f"Error with symbol: replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\'"
+                    message = message + f" (Error with symbol - replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\')"
             symbol = symbol.capitalize()
 
-            # Make sure the coordinates are unique. The form already makes them fit on the table and be integers.
+            # Coordinates validation - Check unique (coordinates are already integers and fit on the table from the form).
             x_coord = int(request.form['x_coord'])
             y_coord = int(request.form['y_coord'])
+
             if (x_coord, y_coord) in db.session.query(Element.x_coord, Element.y_coord).all():
                 # Do not continue if non-unique coordinates
-                return redirect(url_for('index', message="Error: element has same coordinates as another. Element creation cancelled."))
-
+                return redirect(url_for('index', message="Element addition cancelled due to error - element has same coordinates as another."))
+            
+            # Add element
             new_element = Element(
                 name = request.form['name'].strip().capitalize(),
                 symbol = symbol,
@@ -223,27 +229,18 @@ def init_routes(app):
                     if symbol == "":
                         symbol == "X" 
 
-                message = message + "\nError with symbol: replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\'"
+                message = message + f" (Error with symbol - replaced \'{request.form['symbol'].strip()}\' with \'{symbol.capitalize()}\')"
             symbol = symbol.capitalize()
 
 
-            # Coordinates validation (unique, integers, fit on the table).
+            # Validate that coordinates unique - Check if there is another element with the same coordinates
             x_coord = int(request.form['x_coord'])
             y_coord = int(request.form['y_coord'])
-            
-            # Check x is integer
-            if float(request.form['x_coord']) - x_coord != 0:
-                message = message + f"\nError with coordinates: x coordinate entered has been rounded down to {x_coord}"
-
-            # Check y is integer
-            if float(request.form['y_coord']) - y_coord != 0:
-                message = message + f"\nError with coordinates: y coordinate entered has been rounded down to {y_coord}"
-
-            # Check unique
-            if (x_coord, y_coord) in db.session.query(Element.x_coord, Element.y_coord).all():
+            if len(db.session.query(Element.id).filter(and_(Element.x_coord == x_coord, Element.y_coord == y_coord, Element.id != id)).all()) > 0:
                 # Do not continue if non-unique coordinates
-                return redirect(url_for('index', message="Error: element has same coordinates as another. Element update cancelled."))
+                return redirect(url_for('index', message="Element update cancelled due to error - element has same coordinates as another."))
 
+            # Update element
             element.name = request.form['name'].strip().capitalize()
             element.symbol = symbol
             element.atomic_number = int(request.form["atomic_number"])
@@ -269,10 +266,13 @@ def init_routes(app):
     def delete_element():
         if request.method == "POST":
             id=int(request.form['id'])
-            element = Element.query.get_or_404(id)
-            db.session.delete(element)
-            db.session.commit()
-            return redirect(url_for('index', message='Element deleted successfully'))
+            element = Element.query.get(id)
+            if element != None:
+                db.session.delete(element)
+                db.session.commit()
+                return redirect(url_for('index', message='Element deleted successfully'))
+            else:
+                return redirect(url_for('index', message='There was no element to delete'))
         elements = Element.query.all()
         return render_template('delete.html', elements=elements)
     
@@ -391,7 +391,7 @@ def init_routes(app):
                     if symbol == "":
                         symbol == "X" 
                 
-                message = f"Error with symbol: replaced \'{periodic_dict['symbol'][n].strip()}\' with \'{symbol.capitalize()}\'"
+                message = message + f" (Error with symbol - replaced \'{periodic_dict['symbol'][n].strip()}\' with \'{symbol.capitalize()}\')"
             
             symbol = symbol.capitalize()
 
